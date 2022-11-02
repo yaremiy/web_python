@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %} Contact {% endblock %}
+
+{% block body %}
+<div class="w-50 m-auto">
+    {% for category, message in get_flashed_messages(True) %}
+    <ul class="list-group">
+        <li class="list-group-item list-group-item-{{category}} py-1">{{message}}</li>
+    </ul>
+    {%endfor %}
+    {% from "_form_helper.html" import form_helper %}
+    {{ form_helper(form, "contact") }}
+</div>
+{% endblock %}
