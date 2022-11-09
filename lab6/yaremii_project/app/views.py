@@ -59,8 +59,12 @@ def contact():
             subject = form.subject.data,
             message = form.message.data
         )
-        db.session.add(message)
-        db.session.commit()    
+        try:
+            db.session.add(message)
+            db.session.commit()
+        except:
+            db.session.flush()
+            db.session.rollback()    
         flash(f"Your message has been sent: {form.name.data}, {form.email.data}", category='success')
         return redirect(url_for("contact"))
     elif request.method == 'POST':
@@ -84,7 +88,11 @@ def get_log_message(form):
 @app.route('/delete-message/<id>')
 def delete_message(id):
     Message.query.filter_by(id=id).delete()
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.flush()
+        db.session.rollback()
     return redirect(url_for("messages"))
         
 @app.route('/messages')
