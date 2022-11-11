@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %} Account {% endblock %}
+
+{% block body %}
+<div class="text-center mt-4">
+    <h2>Profile of the user: {{ current_user.username }}</h2>
+    <h2>Email: {{ current_user.email }}</h2>
+</div>
+{% endblock %}
