@@ -54,17 +54,22 @@ def contact():
     form = MyForm()
     if form.validate_on_submit():
         logger.info(get_log_message(form))
+        subject = dict(form.subject.choices).get(form.subject.data)
         session['name'] = form.name.data
         session['email'] = form.email.data
         message = Message(
             name=form.name.data,
             email=form.email.data,
             phone=form.phone.data,
-            subject=form.subject.data,
+            subject=subject,
             message=form.message.data
         )
-        db.session.add(message)
-        db.session.commit()
+        try:
+            db.session.add(message)
+            db.session.commit()
+        except:
+            db.session.flush()
+            db.session.rollback()
         flash(
             f"Your message has been sent: {form.name.data}, {form.email.data}", category='success')
         return redirect(url_for("contact"))
@@ -75,6 +80,7 @@ def contact():
     form.name.data = session.get("name")
     form.email.data = session.get("email")
     return render_template('contact.html', menu=menu, form=form)
+
 
 
 def get_log_message(form):
@@ -146,27 +152,6 @@ def delete_user(id):
     User.query.filter_by(id=id).delete()
     db.session.commit()
     return redirect(url_for("users"))
-
-
-def save_message(form):
-    subject = dict(form.subject.choices).get(form.subject.data)
-    logger.info(
-        f"{form.name.data} {form.email.data} {form.phone.data} {subject} {form.message.data}")
-    session['name'] = form.name.data
-    session['email'] = form.email.data
-    message = Message(
-        name=form.name.data,
-        email=form.email.data,
-        phone=form.phone.data,
-        subject=subject,
-        message=form.message.data
-    )
-    try:
-        db.session.add(message)
-        db.session.commit()
-    except:
-        db.session.flush()
-        db.session.rollback()
 
 
 if __name__ == '__main__':
