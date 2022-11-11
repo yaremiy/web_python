@@ -5,3 +5,4 @@ myvenv/
 *.log
 *.db
 migrations/
+.flaskenv
