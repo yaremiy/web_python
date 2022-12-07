@@ -75,18 +75,18 @@ def create_task():
             owner_id=current_user.id,
             deadline=form.deadline.data
         )
-        #try:
-            #task.collaborators.append(current_user)
-        for collaborator in form.collaborators.data:
-            task.collaborators.append(User.query.get_or_404(collaborator))
-        db.session.add(task)
-        db.session.commit()
-        flash(f"New task created: {form.title.data}", category='success')
-        return redirect(url_for("task.tasks", id=current_user.id))
-        #except:
-         #   db.session.flush()
-           # db.session.rollback()
-           # flash(f"Unknown error", category='danger')
+        try:
+            task.collaborators.append(current_user)
+            for collaborator in form.collaborators.data:
+                task.collaborators.append(User.query.get_or_404(collaborator))
+            db.session.add(task)
+            db.session.commit()
+            flash(f"New task created: {form.title.data}", category='success')
+            return redirect(url_for("task.tasks", id=current_user.id))
+        except:
+            db.session.flush()
+            db.session.rollback()
+            flash(f"Unknown error", category='danger')
     elif request.method == 'POST':
         flash("Validation failed", category='warning')
 
