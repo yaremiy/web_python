@@ -46,7 +46,7 @@ class UpdateAccountForm(FlaskForm):
                                        Length(min=4, max=25,
                                               message='Username length must be between 4 and 25'),
                                        Regexp(regex='^[A-Za-z][A-Za-z0-9_.]*$',
-                                              message='Username can contains lettes, numbers, dots and underscores')])
+                                              message='Username must contain only lettes, numbers, dots and underscores')])
     email = StringField("Email", validators=[DataRequired(), Email()])
     about_me = TextAreaField("About me", validators=[Length(max=120, message='About me is too long')])
     picture = FileField("Profile picture", validators=[FileAllowed(['jpg', 'png'])])
@@ -55,12 +55,12 @@ class UpdateAccountForm(FlaskForm):
     def validate_email(self, field):
         if field.data != current_user.email:
             if User.query.filter_by(email=field.data).first():
-                raise ValidationError('Email already registered')
+                raise ValidationError('Email is already registered')
 
     def validate_username(self, field):
         if field.data != current_user.username:
             if User.query.filter_by(username=field.data).first():
-                raise ValidationError('Username already in use')
+                raise ValidationError('Username is already taken')
 
 
 class ResetPasswordForm(FlaskForm):

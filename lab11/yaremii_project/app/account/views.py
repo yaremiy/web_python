@@ -65,7 +65,6 @@ def logout():
 @account_bp.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    print(current_user.last_seen)
     form = UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
@@ -136,8 +135,8 @@ def is_safe_url(target):
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
-    file_name, file_extention = os.path.splitext(form_picture.filename)
-    picture_name = random_hex + file_extention
+    f_name, f_extention = os.path.splitext(form_picture.filename)
+    picture_name = random_hex + f_extention
     picture_path = os.path.join(current_app.root_path, 'static/profile_pics', picture_name)
 
     output_size = (125, 125)
