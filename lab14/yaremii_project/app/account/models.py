@@ -15,6 +15,9 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+    login_attempts =  db.Column(db.Integer, default=0)
+    restrict_time = db.Column(db.DateTime)
+
     image_file = db.Column(db.String(20), nullable=False,
                            default='default.jpg')
     about_me = db.Column(db.String(120), nullable=True, default='Just simple user')
@@ -29,6 +32,7 @@ class User(db.Model, UserMixin):
 
     def verify_password(self, password):
         return check_password_hash(self.password, password)
+    
 
     def repr(self):
         return f"User('{self.username}', '{self.email}'"

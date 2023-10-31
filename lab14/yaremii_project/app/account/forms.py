@@ -1,4 +1,4 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from flask_login import current_user
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError, TextAreaField
 from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo
@@ -17,10 +17,11 @@ class RegistrationForm(FlaskForm):
     email = StringField("Email", validators=[
                         DataRequired(), Email(message='Email is invalid')])
     password = PasswordField('Password',
-                             validators=[DataRequired(), Length(min=6,
-                                                                message='Password must be longer than 6 symbols')])
+                             validators=[DataRequired(), Length(min=8, message='Password must be longer than 8 symbols'),  
+                                         Regexp(regex='^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*\W).{8,}', message='Password must contain lettes, numbers and a symbol') ])
     confirm_password = PasswordField('Confirm password',
                                      validators=[DataRequired(), EqualTo("password")])
+    captcha = RecaptchaField()
     submit = SubmitField("Sign up")
 
     def validate_email(self, field):

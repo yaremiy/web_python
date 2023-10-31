@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import secrets
 from flask import render_template, request, redirect, flash, url_for, abort, current_app
@@ -43,6 +43,13 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
+        if user.restrict_time:
+            if  datetime.now() - user.restrict_time < timedelta(minutes=1):
+                flash("Too many attempts! Wait 10 minutes, please", category="warning")
+                return render_template('login.html', form=form)
+            else: 
+                user.login_attempts = 0
+
         if user and user.verify_password(form.password.data):
             login_user(user, remember=form.remember.data)
             flash("You have been logged in!", category="success")
@@ -51,7 +58,13 @@ def login():
                 return abort(400)
             return redirect(url_for("account.account"))
         else:
-            flash(f"Email or password is incorrect", category='danger')
+            user.login_attempts += 1
+            if user.login_attempts > 2:
+                user.restrict_time = datetime.now()
+                flash(f"Too much incorrect inputs", category='danger')
+            else: 
+                flash(f"Email or password is incorrect", category='danger')
+            db.session.commit()
     return render_template('login.html', form=form)
 
 

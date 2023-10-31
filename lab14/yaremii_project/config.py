@@ -7,6 +7,9 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'somethingiswrittenhere'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = True
+    RECAPTCHA_USE_SSL = False
+    RECAPTCHA_PUBLIC_KEY ='6LfpSeEoAAAAAEFVsNQCUHKkymFLewbDzpiDdmBo'
+    RECAPTCHA_PRIVATE_KEY ='6LfpSeEoAAAAAGc9RSgegubKlTtBRIbrgoOTzTGx'
     
 
 class DevConfig(Config):
